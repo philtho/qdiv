@@ -1,0 +1,87 @@
+## rules for filtering 16S amplicon sequences
+## from both feature table and representative sequences
+## - select samples with {samples_where}
+## - remove chloroplasts, mitochondria and eukaryota
+## - remove samples with less than {min_sample_depth} features
+
+filter_out = "filtered"
+
+rule depth:
+	input:
+		table_csv = filter_out + "/samples-table/sample-frequency-detail.csv",
+
+rule filter:
+	input:
+		table = filter_out + "/table.qza",
+		table_csv = filter_out + "/table/sample-frequency-detail.csv",
+		repseqs = filter_out + "/rep-seqs.qza",
+		repseqs_qzv = filter_out + "/rep-seqs.qzv",
+		barplot = filter_out + "/barplot.qzv",
+
+rule filter_samples:
+	input:
+		table = filter_in + "/table.qza",
+		metadata = metadata,
+	output:
+		table = filter_out + "/samples-table.qza",
+	threads:
+		1
+	shell:
+		"""
+		qiime feature-table filter-samples \
+		  --i-table {input.table} \
+		  --m-metadata-file {input.metadata} \
+		  --p-where "{samples_where}" \
+		  --o-filtered-table {output.table}
+		"""
+
+
+rule filter_depth:
+	input:
+		table = "{dir}/samples-table.qza",
+	output:
+		table = "{dir}/depth-table.qza",
+	threads:
+		1
+	shell:
+		"""
+		qiime feature-table filter-samples \
+		  --i-table {input.table} \
+		  --p-min-frequency {min_sample_depth} \
+		  --o-filtered-table {output.table}
+		"""
+
+rule filter_taxa:
+	input:
+		table = "{dir}/depth-table.qza",
+		taxonomy = taxonomy + "/taxonomy.qza",
+	output:
+		table = "{dir}/table.qza",
+	threads:
+		1
+	shell:
+		"""
+		qiime taxa filter-table \
+		  --i-table {input.table} \
+		  --i-taxonomy {input.taxonomy} \
+		  --p-exclude mitochondria,chloroplast,d__Eukaryota \
+		  --o-filtered-table {output.table}
+		"""
+
+rule filter_seqs:
+	input:
+		seqs = filter_in + "/rep-seqs.qza",
+		table = "filtered/table.qza",
+	output:
+		seqs = "filtered/rep-seqs.qza",
+	threads:
+		1
+	shell:
+		"""
+		qiime feature-table filter-seqs \
+		  --i-data {input.seqs}  \
+		  --i-table {input.table} \
+		  --o-filtered-data {output.seqs}
+		"""
+
+

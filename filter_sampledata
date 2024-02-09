@@ -1,0 +1,28 @@
+#!/bin/bash
+
+## filter_sampledata
+## filter lines in sampledat.csv to match table.csv
+## to avoid lots of errors when importing into ampvis2
+
+TABLE=$1
+SAMPLEDATA=$2
+
+[ -f "$TABLE" -a -f "$SAMPLEDATA" ] || {
+	1>&2 echo "usage: $0 table_csv sampledata_[ct]sv"
+	exit -1
+}
+
+case $SAMPLEDATA in
+  *csv) d=",";;
+  *tsv) d="	";;
+esac
+
+samples_regex=$(head -1 $TABLE |
+	sed "s/^otu,/sample|q2:types${d}/; s/,/${d}|^/g; s/$/${d}/"
+	)
+
+#echo $samples_regex
+
+
+egrep "$samples_regex" $SAMPLEDATA
+

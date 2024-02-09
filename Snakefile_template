@@ -1,0 +1,33 @@
+## Snakefile skeleton for qiime2 processing
+
+## config yaml
+configfile: "snakemake.yaml"
+metadata = config["metadata"]
+
+include: "general.q2"
+
+taxonomy = "taxonomy"
+include: "taxonomy.q2"
+
+filter_in = "dada2"
+samples_where = config["samples_where"]
+min_sample_depth = config["min_sample_depth"]
+include: "filter.q2"
+
+phylogeny_in = "filtered"
+include: "phylogeny.q2"
+
+export_in = "filtered"
+include: "export.q2"
+
+diversity_in = "filtered"
+beta_groups = config["beta_groups"]
+sampling_depth = config["sampling_depth"]
+include: "diversity.q2"
+
+ancom_in = "filtered"
+metadata_ancom = config["metadata_ancom"]
+ancom_levels = config["ancom_levels"]
+ancom_columns = config["ancom_columns"]
+include: "ancombc.q2"
+

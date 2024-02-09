@@ -1,0 +1,52 @@
+## multi-purpose qiime rules
+
+rule table_qzv:
+	input:
+		table = "{dir}/{prefix}able.qza",
+		metadata=metadata,
+	output:
+		qzv = "{dir}/{prefix}able.qzv",
+	shell:
+		"""
+		qiime feature-table summarize \
+		  --i-table {input.table} \
+		  --o-visualization {output.qzv} \
+		  --m-sample-metadata-file {input.metadata}
+		"""
+
+rule table_freq_csv:
+	input:
+		qzv = "{dir}/{name}.qzv",
+	output:
+		csv = "{dir}/{name}/sample-frequency-detail.csv",
+	shell:
+		"""
+		qiime tools export \
+		  --input-path {input.qzv} \
+		  --output-path {wildcards.dir}/{wildcards.name}
+		"""
+
+rule seqs_qzv:
+	input:
+		repseqs = "{dir}/{prefix}-seqs.qza",
+	output:
+		qzv = "{dir}/{prefix}-seqs.qzv",
+	shell:
+		"""
+		qiime feature-table tabulate-seqs \
+		  --i-data {input.repseqs} \
+		  --o-visualization {output.qzv}
+		"""
+
+rule stats_qzv:
+	input:
+		stats = "{dir}/stats.qza",
+	output:
+		qzv = "{dir}/stats.qzv",
+	shell:
+		"""
+		qiime metadata tabulate \
+		  --m-input-file {input.stats} \
+		  --o-visualization {output.qzv}
+		"""
+

@@ -1,0 +1,133 @@
+## rules to calculate ancom tables
+
+ancom_out = ancom_in + "/ancom"
+
+rule ancom:
+	input:
+		volcano = expand(
+		  ancom_out + "/L{level}-{col}-volcano.qzv",
+		  col = ancom_columns,
+		  level = ancom_levels
+		),
+		daplot = expand(
+		  ancom_out + "/L{level}-{col}-daplot.qzv",
+		  col = ancom_columns,
+		  level = ancom_levels
+		),
+		export = expand(
+		  export_out + "/L{level}-{col}-ancom.csv",
+		  col = ancom_columns,
+		  level = ancom_levels
+		),
+
+
+rule ancom_collapse:
+	input:
+		table = ancom_in + "/table.qza",
+		taxonomy = taxonomy + "/taxonomy.qza",
+	output:
+		table = ancom_out + "/L{level}-table.qza",
+		# table_comp = ancom_out + "/table-L{level}-comp.qza",
+	wildcard_constraints:
+		level = "\d",
+	threads:
+		1
+	shell:
+		"""
+		qiime taxa collapse \
+		  --i-table {input.table} \
+		  --i-taxonomy {input.taxonomy} \
+		  --p-level {wildcards.level} \
+		  --o-collapsed-table {output.table}
+		"""
+
+## ANCOM-BC (see later for non-BC with volcano plot)
+## assuming that ancom-bc also uses the collapsed feature table
+rule ancombc_differentials:
+	input:
+		table = "{dir}/{name}-table.qza",
+		metadata = metadata_ancom,
+	output:
+		ancom = "{dir}/{name}-{col}-{ref}-ancom.qza",
+	wildcard_constraints:
+		ref = "\w+",
+		col = "\w+",
+	shell:
+		"""
+		qiime composition ancombc \
+		  --i-table {input.table} \
+		  --m-metadata-file {input.metadata} \
+		  --p-formula "{wildcards.col}" \
+		  --p-reference-levels "{wildcards.col}::{wildcards.ref}" \
+		  --o-differentials {output.ancom}
+		"""
+
+rule ancom_daplot:
+	input:
+		ancom = "{dir}/{name}-ancom.qza",
+	output:
+		barplot = "{dir}/{name}-daplot.qzv",
+	shell:
+		"""
+		qiime composition da-barplot \
+		  --p-significance-threshold 0.05 \
+		  --i-data {input.ancom} \
+		  --o-visualization {output.barplot}
+		"""
+
+rule ancom_csv:
+	input:
+		ancom = "{dir}/{name}-ancom.qza",
+	output:
+		csv = "{dir}/{name}-ancom.csv",
+	params:
+		tmpdir = "ancom.$$"
+	shell:
+		"""
+		qiime tools export \
+		  --input-path {input.ancom} \
+		  --output-path {params.tmpdir}
+		snakerules/join_ancom {output.csv} {params.tmpdir}/*.csv
+		rm -r {params.tmpdir}
+		"""
+
+rule ancom_export:
+	input:
+		csv = ancom_out + "/{file}.csv",
+	output:
+		csv = export_out + "/{file}.csv",
+	shell:
+		"cp {input.csv} {output.csv}"
+
+## ANCOM (non-BC)
+## just for the volcano plot visualisation
+rule ancom_comp:
+	input:
+		table = "{dir}/{name}-table.qza",
+	output:
+		comp = "{dir}/{name}-comp.qza",
+	shell:
+		"""
+		qiime composition add-pseudocount \
+		  --i-table {input.table} \
+		  --o-composition-table {output.comp}
+		"""
+
+rule ancom_volcano:
+	input: 
+		comp = "{dir}/{name}-comp.qza",
+		metadata = metadata_ancom,
+	output:
+		volcano = "{dir}/{name}-{col}-{ref}-volcano.qzv",
+	wildcard_constraints:
+		col = "\w+",
+		ref = "\w+",
+	shell:
+		"""
+		qiime composition ancom \
+		  --i-table {input.comp} \
+		  --m-metadata-file {input.metadata} \
+		  --m-metadata-column {wildcards.col} \
+		  --o-visualization {output.volcano}
+		"""
+

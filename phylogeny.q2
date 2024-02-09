@@ -1,0 +1,69 @@
+## rules to generate phylogeny
+## - masking
+## - alignment
+## - rarifaction
+## - rooted and unrooted phylogenetic trees
+
+phylogeny_out = phylogeny_in + "/phylogeny"
+
+rule phylogeny:
+	input:
+		alignment = phylogeny_out + "/aligned-seqs.qza",
+		masked = phylogeny_out + "/masked-seqs.qza",
+		tree_unrooted = phylogeny_out + "/unrooted-tree.qza",
+		tree_rooted = phylogeny_out + "/rooted-tree.qza",
+
+rule phylogeny_alignment:
+	input:
+		repseqs = phylogeny_in + "/rep-seqs.qza",
+	output:
+		alignment = phylogeny_out + "/aligned-seqs.qza"
+	threads:
+		32
+	shell:
+		"""
+		qiime alignment mafft \
+			--p-n-threads {threads} \
+			--i-sequences {input.repseqs} \
+			--o-alignment {output.alignment}
+		"""
+
+rule phylogeny_mask:
+	input:
+		alignment = phylogeny_out + "/aligned-seqs.qza"
+	output:
+		masked = phylogeny_out + "/masked-seqs.qza"
+	shell:
+		"""
+		qiime alignment mask \
+			--i-alignment {input.alignment} \
+			--o-masked-alignment {output.masked}
+		"""
+
+rule phylogeny_fasttree:
+	input:
+		alignment = phylogeny_out + "/aligned-seqs.qza"
+	output:
+		tree = phylogeny_out + "/unrooted-tree.qza"
+	threads:
+		32
+	shell:
+		"""
+		qiime phylogeny fasttree \
+			--p-n-threads {threads} \
+			--i-alignment {input.alignment} \
+			--o-tree {output.tree}
+		"""
+
+rule phylogeny_root:
+	input:
+		tree = phylogeny_out + "/unrooted-tree.qza"
+	output:
+		tree = phylogeny_out + "/rooted-tree.qza"
+	shell:
+		"""
+		qiime phylogeny midpoint-root \
+			--i-tree {input.tree} \
+			--o-rooted-tree {output.tree}
+		"""
+

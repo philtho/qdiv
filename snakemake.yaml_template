@@ -1,0 +1,29 @@
+## snakemake.yaml configuration for qiime2 processing
+
+## combined ExpC1 + Poudel sampledata
+#metadata: "c1p-sampledata.tsv"
+## just ExpC1 sampledata
+metadata: "sampledata.tsv"
+
+## filter samples
+samples_where: "[pooling_by]='slab'"
+min_sample_depth: "54714"
+
+## diversity
+sampling_depth: "54714"
+
+beta_groups: [
+  "treatment",
+  "dap_f",
+]
+
+## ancom
+metadata_ancom: "sampledata-ancom.tsv"
+
+ancom_levels: [ "6", "5", "4", "3", "2" ]
+
+ancom_columns: [
+  "treatment-PRE",
+  "dap_f-d055",
+]
+

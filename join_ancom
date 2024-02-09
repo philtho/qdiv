@@ -1,0 +1,29 @@
+#!/bin/bash
+
+cat <<-! >/tmp/script.$$.R
+	library(tidyverse)
+	options(readr.show_col_types=FALSE)
+
+	read.ancom <- function(filename) {
+		value <- gsub("_slice.csv","",basename(filename))
+		read_csv(filename) %>%
+			pivot_longer(cols=-id, names_to="factor", values_to=value)
+	}
+
+	df <- read.ancom(commandArgs()[5])
+	
+	for (file in (commandArgs()[-c(1:5)])) {
+		df <- left_join(
+			df, read.ancom(file), by=join_by(id,factor)
+			)
+	}
+
+	str(df)
+
+	write_csv(df, commandArgs()[4])
+
+!
+
+R -f /tmp/script.$$.R $*
+rm /tmp/script.$$.R
+

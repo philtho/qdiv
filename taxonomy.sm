@@ -1,0 +1,20 @@
+## just a barplot using previous taxonomy
+
+rule barplot:
+	output:
+		barplot = "{dir}/barplot.qzv",
+	input:
+		taxonomy = taxonomy + "/taxonomy.qza",
+		table = "{dir}/table.qza",
+		metadata = metadata,
+	threads:
+		1
+	shell:
+		"""
+		qiime taxa barplot \
+			--i-table {input.table} \
+			--i-taxonomy {input.taxonomy} \
+			--m-metadata-file {input.metadata} \
+			--o-visualization {output.barplot}
+		"""
+
