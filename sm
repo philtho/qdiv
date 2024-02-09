@@ -1,7 +1,9 @@
 #!/bin/bash
 
 DIR=$(dirname $0)
+ALL="phylogeny diversity ancom export"
+args=$(echo "$*" | sed "s|all|$ALL|;" )
 
-snakemake --snakefile $DIR/Snakefile -c8 $*
+snakemake --snakefile $DIR/Snakefile -c8 $args
 
 
