@@ -1,12 +1,15 @@
 ## snakemake.yaml configuration for qiime2 processing
 
-## combined ExpC1 + Poudel sampledata
-#metadata: "c1p-sampledata.tsv"
-## just ExpC1 sampledata
 metadata: "sampledata.tsv"
 
+## merge
+input1: "C1-16S-slab-se-237"
+input2: "P14-se-237-rev"
+input3: "P15-se-237-rev"
+#input4: "HJL-16S"
+
 ## filter samples
-samples_where: "[pooling_by]='slab'"
+samples_where: "[Exp]='ExpC' OR [Exp]='Poudel'"
 min_sample_depth: "54714"
 
 ## diversity
