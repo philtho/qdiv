@@ -18,7 +18,7 @@ rule merge_table:
 	input:
 		table1 = input1 + "/table.qza",
 		table2 = input2 + "/table.qza",
-		#table3 = input3 + "/table.qza",
+		table3 = input3 + "/table.qza",
 		#table4 = input4 + "/table.qza",
 		#table5 = input5 + "/table.qza",
 		#table6 = input6 + "/table.qza",
@@ -29,6 +29,7 @@ rule merge_table:
 		qiime feature-table merge \
 		  --i-tables {input.table1} \
 		  --i-tables {input.table2} \
+		  --i-tables {input.table3} \
 		  --o-merged-table {output.table}
 		"""
 		  #--i-tables {input.table5} \
@@ -38,7 +39,7 @@ rule merge_seqs:
 	input:
 		seqs1 = input1 + "/rep-seqs.qza",
 		seqs2 = input2 + "/rep-seqs.qza",
-		#seqs3 = input3 + "/rep-seqs.qza",
+		seqs3 = input3 + "/rep-seqs.qza",
 		#seqs4 = input4 + "/rep-seqs.qza",
 		#seqs5 = input5 + "/rep-seqs.qza",
 		#seqs6 = input6 + "/rep-seqs.qza",
@@ -49,6 +50,7 @@ rule merge_seqs:
 		qiime feature-table merge-seqs \
 		  --i-data {input.seqs1} \
 		  --i-data {input.seqs2} \
+		  --i-data {input.seqs3} \
 		  --o-merged-data {output.seqs}
 		"""
 		  #--i-data {input.seqs5} \
@@ -58,7 +60,7 @@ rule merge_taxonomy:
 	input:
 		tax1 = input1 + "/silva-138_nr99_515f806r/taxonomy.qza",
 		tax2 = input2 + "/silva-138_nr99_515f806r/taxonomy.qza",
-		#tax3 = input3 + "/silva-138_nr99_515f806r/taxonomy.qza",
+		tax3 = input3 + "/silva-138_nr99_515f806r/taxonomy.qza",
 		#tax4 = input4 + "/silva-138_nr99_515f806r/taxonomy.qza",
 		#tax5 = input5 + "/silva-138_nr99_515f806r/taxonomy.qza",
 		#tax6 = input6 + "/silva-138_nr99_515f806r/taxonomy.qza",
@@ -69,6 +71,7 @@ rule merge_taxonomy:
 		qiime feature-table merge-taxa \
 		  --i-data {input.tax1} \
 		  --i-data {input.tax2} \
+		  --i-data {input.tax3} \
 		  --o-merged-data {output.tax}
 		"""
 		  #--i-data {input.tax5} \
