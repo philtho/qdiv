@@ -87,7 +87,7 @@ rule ancom_csv:
 		qiime tools export \
 		  --input-path {input.ancom} \
 		  --output-path {params.tmpdir}
-		snakerules/join_ancom {output.csv} {params.tmpdir}/*.csv
+		qdiv/join_ancom {output.csv} {params.tmpdir}/*.csv
 		rm -r {params.tmpdir}
 		"""
 
