@@ -94,11 +94,11 @@ rule ancom_csv:
 
 rule ancom_export:
 	input:
-		csv = ancom_out + "/{file}.csv",
+		sv = ancom_out + "/{file}sv",
 	output:
-		csv = export_out + "/{file}.csv",
+		sv = export_out + "/{file}sv",
 	shell:
-		"cp {input.csv} {output.csv}"
+		"cp {input} {output}"
 
 ## ANCOM (non-BC)
 ## just for the volcano plot visualisation

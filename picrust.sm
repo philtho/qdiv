@@ -1,0 +1,148 @@
+## rules for PICRUSt2 metagenome prediction
+
+picrust_out = picrust_in + "/picrust"
+ec_out = picrust_out + "/ec_metagenome"
+ko_out = picrust_out + "/ko_metagenome"
+pathway_out = picrust_out + "/pathway_abundance"
+refs = [ "ec", "ko", "pathway" ]
+picrust_alpha = [ "evenness", "shannon", "observed_features" ]
+
+rule picrust:
+	input:
+		qzv = expand(
+			picrust_out + "/{ref}-table.qzv",
+			ref=refs
+		),
+                emp = expand(
+			picrust_out + "/{ref}/bray_curtis_emperor.qzv",
+			ref=refs
+		),
+		alpha = expand(
+			picrust_out + "/{ref}/{measure}_significance.qzv",
+			ref=refs, measure=picrust_alpha
+		),
+		table_tsv = expand(
+			picrust_out + "/{ref}-table.tsv",
+			ref=refs
+		),
+		csv = expand(
+			picrust_out + "/{ref}-table.csv",
+			ref=refs, col=ancom_columns
+		),
+		ancom_csv = expand(
+			export_out + "/{ref}-{col}-ancom.csv",
+			ref=refs, col=ancom_columns
+		),
+		ancom = expand(
+			picrust_out + "/{ref}-{col}-daplot.qzv",
+			ref=refs, col=ancom_columns
+		),
+
+
+rule picrust_default:
+	input:
+		table = picrust_in + "/table.qza",
+		seqs = picrust_in + "/rep-seqs.qza",
+	output:
+		ec = picrust_out + "/ec-table.qza",
+		ko = picrust_out + "/ko-table.qza",
+		pathway = picrust_out + "/pathway-table.qza",
+	threads:
+		32
+	shell:
+		"""
+		qiime picrust2 full-pipeline \
+		  --i-table {input.table} \
+		  --i-seq {input.seqs} \
+		  --o-ko-metagenome {output.ko} \
+		  --o-ec-metagenome {output.ec} \
+		  --o-pathway-abundance {output.pathway} \
+		  --p-placement-tool epa-ng \
+		  --p-threads {threads} \
+		  --p-hsp-method mp \
+		  --p-max-nsti 2 \
+		  --verbose
+		"""
+		
+## https://github.com/picrust/picrust2/wiki/q2-picrust2-Tutorial/
+##   --p-placement-tool sepp \
+##   --p-hsp-method pic \
+##   --p-max-nsti cut-off for excluding sequences from phylogeny,
+##	default 2 may need to be increased for environmental datasets
+
+
+#rule picrust_qzv:
+#	input:
+#		qza = "{dir}/picrust/{ref}-table.qza",
+#		metadata = metadata,
+#	output:
+#		qzv = "{dir}/picrust/{ref}-table.qzv",
+#	shell:
+#		"""
+#		qiime feature-table summarize \
+#		  --i-table {input.qza} \
+#		  --m-sample-metadata-file {input.metadata} \
+#		  --o-visualization {output.qzv}
+#		"""
+
+rule picrust_diversity:
+	input:
+		table = "{dir}/{ref}-table.qza",
+		metadata = metadata,
+	output:
+                bray_emp = "{dir}/{ref}/bray_curtis_emperor.qzv",
+		observed_vector = "{dir}/{ref}/observed_features_vector.qza",
+		shannon_vector = "{dir}/{ref}/shannon_vector.qza",
+	wildcard_constraints:
+		ref = "\w+",
+	params:
+		output_dir = "{dir}/{ref}",
+	threads:
+		4
+	shell:
+		"""
+		qiime diversity core-metrics \
+		  --i-table {input.table} \
+		  --p-sampling-depth {sampling_depth} \
+		  --m-metadata-file {input.metadata} \
+		  --output-dir {params.output_dir}.$$ \
+		  --p-n-jobs {threads}
+		mv {params.output_dir}.$$/* {params.output_dir}/
+		rmdir {params.output_dir}.$$
+		"""
+
+rule picrust_csv:
+	input:
+		qza = "{dir}/picrust/{ref}-table.qza",
+	output:
+		tsv = "{dir}/picrust/{ref}-table.tsv",
+		csv = "{dir}/picrust/{ref}-table.csv",
+	params:
+		tmpdir = "biom.$$"
+	shell:
+		"""
+		qiime tools export \
+		  --input-path {input.qza} \
+		  --output-path {params.tmpdir}
+		biom convert \
+		  --input-fp {params.tmpdir}/feature-table.biom \
+		  --output-fp {output.tsv} \
+		  --to-tsv
+		tail --lines=+2 {output.tsv} | \
+			tr '\t' ',' | \
+			sed "s/#OTU ID/id/" >{output.csv}
+		rm -r {params.tmpdir}
+		cp {output} {export_out}/
+		"""
+	
+rule picrust_export:
+	input:
+		file = picrust_out + "/{name}sv",
+	output:
+		file = export_out + "/{name}sv"
+	shell:
+		"""
+		cp {input} {output}
+		"""
+
+

@@ -10,10 +10,10 @@ input3: "P15-se-237-rev"
 
 ## filter samples
 samples_where: "[Exp]='ExpC' OR [Exp]='Poudel'"
-min_sample_depth: "54714"
+min_sample_depth: "99999"
 
 ## diversity
-sampling_depth: "54714"
+sampling_depth: "99999"
 
 beta_groups: [
   "treatment",
@@ -21,7 +21,7 @@ beta_groups: [
 ]
 
 ## ancom
-metadata_ancom: "sampledata-ancom.tsv"
+metadata_ancom: "sampledata.tsv"
 
 ancom_levels: [ "6", "5", "4", "3", "2" ]
 

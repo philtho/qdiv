@@ -9,8 +9,17 @@ include: "general.sm"
 taxonomy = "taxonomy"
 include: "taxonomy.sm"
 
+## uncomment inputs for merging
+input1 = config["input1"]
+input2 = config["input2"]
+#input3 = config["input3"]
+#input4 = config["input4"]
+#input5 = config["input5"]
+#input6 = config["input6"]
+include: "merge.sm"
+
 ## dada2 or merged
-filter_in = "dada2"
+filter_in = "merged"
 samples_where = config["samples_where"]
 min_sample_depth = config["min_sample_depth"]
 include: "filter.sm"
@@ -31,4 +40,7 @@ metadata_ancom = config["metadata_ancom"]
 ancom_levels = config["ancom_levels"]
 ancom_columns = config["ancom_columns"]
 include: "ancombc.sm"
+
+picrust_in = "filtered"
+include: "picrust.sm"
 
