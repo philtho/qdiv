@@ -50,6 +50,7 @@ rule ancombc_differentials:
 	output:
 		ancom = "{dir}/{name}-{col}-{ref}-ancom.qza",
 	wildcard_constraints:
+		name = "\w+",
 		ref = "\w+",
 		col = "\w+",
 	shell:
