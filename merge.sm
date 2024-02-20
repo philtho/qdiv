@@ -18,7 +18,10 @@ rule merge_table:
 	input:
 		table1 = input1 + "/table.qza",
 		table2 = input2 + "/table.qza",
+<<<<<<< HEAD
 		table3 = input3 + "/table.qza",
+=======
+>>>>>>> 06deb49bb3471e25c8940cc02b9689ad53605f35
 		#table4 = input4 + "/table.qza",
 		#table5 = input5 + "/table.qza",
 		#table6 = input6 + "/table.qza",
@@ -39,7 +42,10 @@ rule merge_seqs:
 	input:
 		seqs1 = input1 + "/rep-seqs.qza",
 		seqs2 = input2 + "/rep-seqs.qza",
+<<<<<<< HEAD
 		seqs3 = input3 + "/rep-seqs.qza",
+=======
+>>>>>>> 06deb49bb3471e25c8940cc02b9689ad53605f35
 		#seqs4 = input4 + "/rep-seqs.qza",
 		#seqs5 = input5 + "/rep-seqs.qza",
 		#seqs6 = input6 + "/rep-seqs.qza",
@@ -60,7 +66,10 @@ rule merge_taxonomy:
 	input:
 		tax1 = input1 + "/silva-138_nr99_515f806r/taxonomy.qza",
 		tax2 = input2 + "/silva-138_nr99_515f806r/taxonomy.qza",
+<<<<<<< HEAD
 		tax3 = input3 + "/silva-138_nr99_515f806r/taxonomy.qza",
+=======
+>>>>>>> 06deb49bb3471e25c8940cc02b9689ad53605f35
 		#tax4 = input4 + "/silva-138_nr99_515f806r/taxonomy.qza",
 		#tax5 = input5 + "/silva-138_nr99_515f806r/taxonomy.qza",
 		#tax6 = input6 + "/silva-138_nr99_515f806r/taxonomy.qza",
