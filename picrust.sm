@@ -93,6 +93,7 @@ rule picrust_diversity:
                 bray_emp = "{dir}/{ref}/bray_curtis_emperor.qzv",
 		observed_vector = "{dir}/{ref}/observed_features_vector.qza",
 		shannon_vector = "{dir}/{ref}/shannon_vector.qza",
+		evenness_vector = "{dir}/{ref}/evenness_vector.qza",
 	wildcard_constraints:
 		ref = "\w+",
 	params:
