@@ -4,8 +4,8 @@ metadata: "sampledata.tsv"
 
 ## merge
 input1: "C1-16S-slab-se-237"
-input2: "P14-se-237-rev"
-input3: "P15-se-237-rev"
+#input2: "P14-se-237-rev"
+#input3: "P15-se-237-rev"
 #input4: "HJL-16S"
 
 ## filter samples

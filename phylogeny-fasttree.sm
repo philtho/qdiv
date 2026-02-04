@@ -1,0 +1,37 @@
+## rules to generate phylogeny
+## - fragment-insertion SEPP method
+
+## reference databases...
+##   /w/qiime/SEPP/sepp-refs-gg-13-8.qza
+##   /w/qiime/SEPP/sepp-refs-silva-128.qza
+
+
+phylogeny_out = phylogeny_in + "/phylogeny"
+refdir = "/home/pthoma28/w"
+
+rule phylogeny:
+	input:
+		#alignment = phylogeny_out + "/aligned-seqs.qza",
+		#masked = phylogeny_out + "/masked-seqs.qza",
+		#tree_unrooted = phylogeny_out + "/unrooted-tree.qza",
+		tree_rooted = phylogeny_out + "/rooted-tree.qza",
+
+rule phylogeny_sepp:
+	input:
+		repseqs = phylogeny_in + "/rep-seqs.qza",
+		reference = refdir + "/qiime/SEPP/sepp-refs-gg-13-8.qza",
+	output:
+		tree = phylogeny_out + "/rooted-tree.qza",
+		placements = phylogeny_out + "/sepp-placements.qza",
+	threads:
+		64
+	shell:
+		"""
+		qiime fragment-insertion sepp \
+			--p-threads {threads} \
+			--i-representative-sequences {input.repseqs} \
+			--i-reference-database {input.reference} \
+			--o-tree {output.tree} \
+			--o-placements {output.placements}
+		"""
+

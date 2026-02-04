@@ -11,7 +11,7 @@ include: "taxonomy.sm"
 
 ## uncomment inputs for merging
 input1 = config["input1"]
-input2 = config["input2"]
+#input2 = config["input2"]
 #input3 = config["input3"]
 #input4 = config["input4"]
 #input5 = config["input5"]
@@ -25,7 +25,10 @@ min_sample_depth = config["min_sample_depth"]
 include: "filter.sm"
 
 phylogeny_in = "filtered"
-include: "phylogeny.sm"
+## uncomment for mafft/fasttree de novo phylogeny (fast)
+include: "phylogeny-fasttree.sm"
+## uncomment for SEPP fragment-insertion reference phylogeny
+#include: "phylogeny-sepp.sm"
 
 export_in = "filtered"
 include: "export.sm"

@@ -50,4 +50,5 @@ rsconnect/
 
 ## Phil
 Snakefile
+merge.sm
 snakemake.yaml
