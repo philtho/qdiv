@@ -1,35 +1,5 @@
 ## multi-purpose qiime rules
 
-rule table_qzv:
-	input:
-		table = "{dir}/{prefix}able.qza",
-		metadata=metadata,
-	output:
-		qzv = "{dir}/{prefix}able.qzv",
-		featurefreq = "{dir}/{prefix}able-featurefreq.qza",
-		samplefreq = "{dir}/{prefix}able-samplefreq.qza",
-	shell:
-		"""
-		qiime feature-table summarize \
-		  --i-table {input.table} \
-		  --m-metadata-file {input.metadata} \
-		  --o-feature-frequencies {output.featurefreq} \
-		  --o-sample-frequencies {output.samplefreq} \
-		  --o-summary {output.qzv}
-		"""
-
-rule table_freq_html:
-	input:
-		qzv = "{dir}/{name}.qzv",
-	output:
-		csv = "{dir}/{name}/sample-frequency-detail.html",
-	shell:
-		"""
-		qiime tools export \
-		  --input-path {input.qzv} \
-		  --output-path {wildcards.dir}/{wildcards.name}
-		"""
-
 rule seqs_qzv:
 	input:
 		repseqs = "{dir}/{prefix}-seqs.qza",
@@ -53,4 +23,32 @@ rule stats_qzv:
 		  --m-input-file {input.stats} \
 		  --o-visualization {output.qzv}
 		"""
+
+rule table_summary:
+	input:
+		table = "{dir}/table.qza",
+	output:
+		samplefreq = "{dir}/table/samplefreq.csv",
+		featurefreq = "{dir}/table/featurefreq.csv",
+		qzv = "{dir}/table/summary.qzv",
+	threads:
+		1
+	shell:
+		"""
+		qiime feature-table summarize \
+		  --i-table {input.table} \
+		  --output-dir temp.$$
+		qiime tools export \
+		  --input-path temp.$$/sample_frequencies.qza \
+		  --output-path temp.$$/sample
+		sed "s/\t/,/g" temp.$$/sample/metadata.tsv |
+		  grep -v "q2:types" > {output.samplefreq}
+		qiime tools export \
+		  --input-path temp.$$/feature_frequencies.qza \
+		  --output-path temp.$$/feature
+		sed "s/\t/,/g" temp.$$/feature/metadata.tsv |
+		  grep -v "q2:types" > {output.featurefreq}
+		mv temp.$$/summary.qzv {output.qzv}
+		rm -r temp.$$
+                """
 

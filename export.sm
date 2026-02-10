@@ -10,6 +10,8 @@ export_out = "expdata"
 rule export:
 	input:
 		metadata = export_out + "/sampledata.csv",
+		dnastats = export_out + "/dnastats.csv",
+		#dada2stats = export_out + "dada2stats.csv",
 		table = export_out + "/table.qza",
 		table_csv = export_out + "/table.csv",
 		taxonomy = export_out + "/taxonomy.qza",
@@ -22,6 +24,7 @@ rule export:
 rule export_table:
 	input:
 		metadata = metadata,
+		dnastats = dnastats,
 		table = export_in + "/table.qza",
 	output:
 		metadata_csv = export_out + "/sampledata.csv",
@@ -104,4 +107,13 @@ rule export_seqs:
 			--input-path {input.repseqs} \
 			--output-path {export_out}
 		"""
+
+#rule export_stats:
+#	input:
+#		merged = 
+#	output:
+#	shell:
+#		"""
+#		"""
+
 
