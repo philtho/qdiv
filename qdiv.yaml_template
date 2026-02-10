@@ -1,6 +1,8 @@
 ## snakemake.yaml configuration for qiime2 processing
 
 metadata: "sampledata.tsv"
+dnastats: "dnastats.csv"
+refdir: "/w"   ## or /home/pthoma28/w
 
 ## merge
 input1: "C1-16S-slab-se-237"

@@ -52,3 +52,4 @@ rsconnect/
 Snakefile
 merge.sm
 snakemake.yaml
+.Snakefile.swp

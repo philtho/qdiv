@@ -2,12 +2,11 @@
 ## - fragment-insertion SEPP method
 
 ## reference databases...
-##   /w/qiime/SEPP/sepp-refs-gg-13-8.qza
-##   /w/qiime/SEPP/sepp-refs-silva-128.qza
+##   {refdir}/qiime/SEPP/sepp-refs-gg-13-8.qza
+##   {refdir}/w/qiime/SEPP/sepp-refs-silva-128.qza
 
 
 phylogeny_out = phylogeny_in + "/phylogeny"
-refdir = "/home/pthoma28/w"
 
 rule phylogeny:
 	input:

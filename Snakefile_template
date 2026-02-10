@@ -3,6 +3,8 @@
 ## config yaml
 configfile: "qdiv.yaml"
 metadata = config["metadata"]
+dnastats = config["dnastats"]
+refdir = config["refdir"]
 
 include: "general.sm"
 
