@@ -8,12 +8,12 @@ filter_out = "filtered"
 
 rule depth:
 	input:
-		table_csv = filter_out + "/samples-table/sample-frequency-detail.csv",
+		table_csv = filter_out + "/samples-table/sample-frequency-detail.html",
 
 rule filter:
 	input:
 		table = filter_out + "/table.qza",
-		table_csv = filter_out + "/table/sample-frequency-detail.csv",
+		table_csv = filter_out + "/table/sample-frequency-detail.html",
 		repseqs = filter_out + "/rep-seqs.qza",
 		repseqs_qzv = filter_out + "/rep-seqs.qzv",
 		barplot = filter_out + "/barplot.qzv",

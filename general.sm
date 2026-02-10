@@ -6,19 +6,23 @@ rule table_qzv:
 		metadata=metadata,
 	output:
 		qzv = "{dir}/{prefix}able.qzv",
+		featurefreq = "{dir}/{prefix}able-featurefreq.qza",
+		samplefreq = "{dir}/{prefix}able-samplefreq.qza",
 	shell:
 		"""
 		qiime feature-table summarize \
 		  --i-table {input.table} \
-		  --o-visualization {output.qzv} \
-		  --m-sample-metadata-file {input.metadata}
+		  --m-metadata-file {input.metadata} \
+		  --o-feature-frequencies {output.featurefreq} \
+		  --o-sample-frequencies {output.samplefreq} \
+		  --o-summary {output.qzv}
 		"""
 
-rule table_freq_csv:
+rule table_freq_html:
 	input:
 		qzv = "{dir}/{name}.qzv",
 	output:
-		csv = "{dir}/{name}/sample-frequency-detail.csv",
+		csv = "{dir}/{name}/sample-frequency-detail.html",
 	shell:
 		"""
 		qiime tools export \
