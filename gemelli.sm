@@ -1,0 +1,48 @@
+## rules for gemelli RPCA diversity
+## - Robust Aitchison PCA ordination
+## - emperor plot
+## - PERMANOVA?
+
+rpca_out = diversity_in + "/gemelli"
+
+rule rpca:
+	input:
+		rpca_ord = rpca_out + "/ordination.qza",
+		rpca_dist = rpca_out + "/distance.qza",
+		rpca_biplot = rpca_out + "/rpca_emperor.qzv",
+
+rule rpca_ordination:
+	input:
+		table = diversity_in + "/table.qza",
+	output:
+		rpca_ord = rpca_out + "/ordination.qza",
+		rpca_dist = rpca_out + "/distance.qza",
+	threads:
+		8
+	shell:
+		"""
+		qiime gemelli rpca \
+			--i-table {input.table} \
+			--p-min-sample-count 500 \
+			--o-biplot {output.rpca_ord} \
+			--o-distance-matrix {output.rpca_dist}
+		"""
+
+rule rpca_biplot:
+	input:
+		rpca_ord = rpca_out + "/ordination.qza",
+		taxonomy = taxonomy + "/taxonomy.qza",
+		metadata = metadata,
+	output:
+		rpca_biplot = rpca_out + "/rpca_emperor.qzv",
+	threads:
+		8
+	shell:
+		"""
+		qiime emperor biplot \
+			--i-biplot {input.rpca_ord} \
+			--m-sample-metadata-file {input.metadata} \
+			--m-feature-metadata-file {input.taxonomy} \
+			--o-visualization {output.rpca_biplot} \
+			--p-number-of-features 8
+		"""
