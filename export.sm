@@ -117,7 +117,7 @@ rule export_seqs:
 
 rule export_freq:
 	input:
-		freq = "{dir}/table/{name}freq.csv",
+		freq = "{dir}/{name}freq.csv",
 	output:
 		freq = export_out + "/{dir}-{name}freq.csv",
 	shell:

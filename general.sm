@@ -28,8 +28,8 @@ rule table_summary:
 	input:
 		table = "{dir}/table.qza",
 	output:
-		samplefreq = "{dir}/table/samplefreq.csv",
-		featurefreq = "{dir}/table/featurefreq.csv",
+		samplefreq = "{dir}/samplefreq.csv",
+		featurefreq = "{dir}/featurefreq.csv",
 		qzv = "{dir}/table/summary.qzv",
 	threads:
 		1
@@ -41,7 +41,7 @@ rule table_summary:
 		qiime tools export \
 		  --input-path temp.$$/sample_frequencies.qza \
 		  --output-path temp.$$/sample
-		sed "s/\t/,/g" temp.$$/sample/metadata.tsv |
+		sed "s/,//g; s/ /_/g; s/\t/,/g;" temp.$$/sample/metadata.tsv |
 		  grep -v "q2:types" > {output.samplefreq}
 		qiime tools export \
 		  --input-path temp.$$/feature_frequencies.qza \
