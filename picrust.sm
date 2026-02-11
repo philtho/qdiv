@@ -138,9 +138,9 @@ rule picrust_csv:
 	
 rule picrust_export:
 	input:
-		file = picrust_out + "/{name}sv",
+		file = picrust_out + "/{name}-ancom.csv",
 	output:
-		file = export_out + "/{name}sv"
+		file = export_out + "/{name}-ancom.csv"
 	shell:
 		"""
 		cp {input} {output}

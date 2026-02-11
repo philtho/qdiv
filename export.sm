@@ -11,27 +11,34 @@ rule export:
 	input:
 		metadata = export_out + "/sampledata.csv",
 		dnastats = export_out + "/dnastats.csv",
-		#dada2stats = export_out + "dada2stats.csv",
+		dada2stats = export_out + "/dada2stats.csv",
 		table = export_out + "/table.qza",
 		table_csv = export_out + "/table.csv",
 		taxonomy = export_out + "/taxonomy.qza",
 		taxonomy_csv = export_out + "/taxonomy.csv",
 		tree = export_out + "/rooted-tree.qza",
 		tree_nwk = export_out + "/tree.nwk",
-		repseqs = export_out + "/dna-sequences.fasta"
+		repseqs = export_out + "/dna-sequences.fasta",
+		merged_samplefreq = export_out + "/merged-samplefreq.csv",
+		merged_featurefreq = export_out + "/merged-featurefreq.csv",
+		filtered_samplefreq = export_out + "/filtered-samplefreq.csv",
+		filtered_featurefreq = export_out + "/filtered-featurefreq.csv",
 
 
 rule export_table:
 	input:
 		metadata = metadata,
-		dnastats = dnastats,
 		table = export_in + "/table.qza",
+		dnastats = dnastats,
+		dada2stats = "merged/dada2stats.csv",
 	output:
 		metadata_csv = export_out + "/sampledata.csv",
 		metadata_tsv = export_out + "/sampledata.tsv",
 		table_qza = export_out + "/table.qza",
 		table_tsv = export_out + "/table.tsv",
 		table_csv = export_out + "/table.csv",
+		dnastats = export_out + "/dnastats.csv",
+		dada2stats = export_out + "/dada2stats.csv",
 	threads:
 		1
 	shell:
@@ -108,12 +115,14 @@ rule export_seqs:
 			--output-path {export_out}
 		"""
 
-#rule export_stats:
-#	input:
-#		merged = 
-#	output:
-#	shell:
-#		"""
-#		"""
+rule export_freq:
+	input:
+		freq = "{dir}/table/{name}freq.csv",
+	output:
+		freq = export_out + "/{dir}-{name}freq.csv",
+	shell:
+		"""
+		cp {input.freq} {output.freq}
+		"""
 
 

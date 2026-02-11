@@ -46,7 +46,7 @@ rule table_summary:
 		qiime tools export \
 		  --input-path temp.$$/feature_frequencies.qza \
 		  --output-path temp.$$/feature
-		sed "s/\t/,/g" temp.$$/feature/metadata.tsv |
+		sed "s/,//g; s/ /_/g; s/\t/,/g" temp.$$/feature/metadata.tsv |
 		  grep -v "q2:types" > {output.featurefreq}
 		mv temp.$$/summary.qzv {output.qzv}
 		rm -r temp.$$
