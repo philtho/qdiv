@@ -7,12 +7,13 @@ metadata = "sampledata.tsv"
 rule merge:
 	input:
 		table = "merged/table.qza",
-		table_qzv = "merged/table.qzv",
+		samplefreq_csv = "merged/samplefreq.csv",
+		featurefreq_csv = "merged/featurefreq.csv",
 		repseqs = "merged/rep-seqs.qza",
 		repseqs_qzv = "merged/rep-seqs.qzv",
 		taxonomy = "taxonomy/taxonomy.qza",
-		barplot = "merged/barplot.qzv",
-
+		#barplot = "merged/barplot.qzv",
+		dada2stats_tsv = "merged/dada2stats.csv"
 
 rule merge_table:
 	input:
@@ -20,8 +21,6 @@ rule merge_table:
 		#table2 = input2 + "/table.qza",
 		#table3 = input3 + "/table.qza",
 		#table4 = input4 + "/table.qza",
-		#table5 = input5 + "/table.qza",
-		#table6 = input6 + "/table.qza",
 	output:
 		table = "merged/table.qza",
 	shell:
@@ -31,14 +30,28 @@ rule merge_table:
 		  --o-merged-table {output.table}
 		"""
 
+rule merge_stats:
+	input:
+		stats1 = input1 + "/stats/stats.tsv",
+		#stats2 = input2 + "/stats/stats.tsv",
+		#stats3 = input3 + "/stats/stats.tsv",
+		#stats4 = input4 + "/stats/stats.tsv",
+	output:
+		csv = "merged/dada2stats.csv"
+	shell:
+		"""
+		cat {input} >merged/stats.tsv
+		( head -1 merged/stats.tsv | sed "s/ /_/g";
+		  egrep -v "sample-id|q2:types" merged/stats.tsv
+		) | sed "s/,//g; s/\t/,/g" > {output.csv}
+		"""
+
 rule merge_seqs:
 	input:
 		seqs1 = input1 + "/rep-seqs.qza",
 		#seqs2 = input2 + "/rep-seqs.qza",
 		#seqs3 = input3 + "/rep-seqs.qza",
 		#seqs4 = input4 + "/rep-seqs.qza",
-		#seqs5 = input5 + "/rep-seqs.qza",
-		#seqs6 = input6 + "/rep-seqs.qza",
 	output:
 		seqs = "merged/rep-seqs.qza",
 	shell:
@@ -54,8 +67,6 @@ rule merge_taxonomy:
 		#tax2 = input2 + "/silva-138_nr99_515f806r/taxonomy.qza",
 		#tax3 = input3 + "/silva-138_nr99_515f806r/taxonomy.qza",
 		#tax4 = input4 + "/silva-138_nr99_515f806r/taxonomy.qza",
-		#tax5 = input5 + "/silva-138_nr99_515f806r/taxonomy.qza",
-		#tax6 = input6 + "/silva-138_nr99_515f806r/taxonomy.qza",
 	output:
 		tax = taxonomy + "/taxonomy.qza"
 	shell:
