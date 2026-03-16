@@ -1,19 +1,18 @@
+## merge multiple denoised tables
 
-## config yaml
-#configfile: "snakemake.yaml"
-#metadata = config["metadata"]
 metadata = "sampledata.tsv"
+taxref = config["taxref"]
+merged_out = "merged"
 
 rule merge:
 	input:
-		table = "merged/table.qza",
-		samplefreq_csv = "merged/samplefreq.csv",
-		featurefreq_csv = "merged/featurefreq.csv",
-		repseqs = "merged/rep-seqs.qza",
-		repseqs_qzv = "merged/rep-seqs.qzv",
-		taxonomy = "taxonomy/taxonomy.qza",
-		#barplot = "merged/barplot.qzv",
-		dada2stats_tsv = "merged/dada2stats.csv"
+		table = merged_out + "/table.qza",
+		samplefreq_csv = merged_out + "/samplefreq.csv",
+		featurefreq_csv = merged_out + "/featurefreq.csv",
+		repseqs = merged_out + "/rep-seqs.qza",
+		repseqs_qzv = merged_out + "/rep-seqs.qzv",
+		taxonomy = taxonomy + "/taxonomy.qza",
+		dada2stats_tsv = merged_out + "/dada2stats.csv"
 
 rule merge_table:
 	input:
@@ -63,10 +62,10 @@ rule merge_seqs:
 
 rule merge_taxonomy:
 	input:
-		tax1 = input1 + "/silva-138_nr99_515f806r/taxonomy.qza",
-		#tax2 = input2 + "/silva-138_nr99_515f806r/taxonomy.qza",
-		#tax3 = input3 + "/silva-138_nr99_515f806r/taxonomy.qza",
-		#tax4 = input4 + "/silva-138_nr99_515f806r/taxonomy.qza",
+		tax1 = input1 + "/{taxref}/taxonomy.qza",
+		tax2 = input2 + "/{taxref}/taxonomy.qza",
+		#tax3 = input3 + "/{taxref}/taxonomy.qza",
+		#tax4 = input4 + "/{taxref}/taxonomy.qza",
 	output:
 		tax = taxonomy + "/taxonomy.qza"
 	shell:

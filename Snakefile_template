@@ -12,13 +12,12 @@ taxonomy = "taxonomy"
 include: "taxonomy.sm"
 
 ## uncomment inputs for merging
-input1 = config["input1"]
+#input1 = config["input1"]
 #input2 = config["input2"]
-#input3 = config["input3"]
-#input4 = config["input4"]
-#input5 = config["input5"]
-#input6 = config["input6"]
-include: "merge.sm"
+#include: "merge.sm"
+## uncomment for dummy merge to prep for filter
+#input = "dada2"
+#include: "merge1.sm"
 
 ## dada2 or merged
 filter_in = "merged"
@@ -28,9 +27,9 @@ include: "filter.sm"
 
 phylogeny_in = "filtered"
 ## uncomment for mafft/fasttree de novo phylogeny (fast)
-include: "phylogeny-fasttree.sm"
+#include: "phylogeny-fasttree.sm"
 ## uncomment for SEPP fragment-insertion reference phylogeny
-#include: "phylogeny-sepp.sm"
+include: "phylogeny-sepp.sm"
 
 export_in = "filtered"
 include: "export.sm"
@@ -39,6 +38,7 @@ diversity_in = "filtered"
 beta_groups = config["beta_groups"]
 sampling_depth = config["sampling_depth"]
 include: "diversity.sm"
+include: "gemelli.sm"
 
 ancom_in = "filtered"
 metadata_ancom = config["metadata_ancom"]
@@ -46,6 +46,6 @@ ancom_levels = config["ancom_levels"]
 ancom_columns = config["ancom_columns"]
 include: "ancombc.sm"
 
-picrust_in = "filtered"
-include: "picrust.sm"
+#picrust_in = "filtered"
+#include: "picrust.sm"
 

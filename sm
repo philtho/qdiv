@@ -4,6 +4,6 @@ DIR=$(dirname $0)
 ALL="phylogeny diversity ancom export"
 args=$(echo "$*" | sed "s|all|$ALL|;" )
 
-snakemake --snakefile $DIR/Snakefile -c8 $args
+snakemake --snakefile $DIR/Snakefile --rerun-trigger mtime -c8 $args
 
 

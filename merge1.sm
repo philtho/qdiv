@@ -1,0 +1,22 @@
+## dummy merge.sm to get files in place for filter
+
+merged_out = input
+
+rule merge:
+	input:
+		dada2stats_tsv = input + "/dada2stats.csv",
+
+rule merge_stats:
+	input:
+		stats = input + "/stats/stats.tsv",
+	output:
+		tsv = input + "/dada2stats.tsv",
+		csv = input + "/dada2stats.csv",
+	shell:
+		"""
+		cat {input} > {output.tsv}
+		( head -1 {output.tsv} | sed "s/ /_/g";
+		  egrep -v "sample-id|q2:types" {output.tsv}
+		) | sed "s/,//g; s/\t/,/g" > {output.csv}
+		"""
+

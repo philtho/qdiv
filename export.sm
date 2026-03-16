@@ -30,7 +30,7 @@ rule export_table:
 		metadata = metadata,
 		table = export_in + "/table.qza",
 		dnastats = dnastats,
-		dada2stats = "merged/dada2stats.csv",
+		dada2stats = merged_out + "/dada2stats.csv",
 	output:
 		metadata_csv = export_out + "/sampledata.csv",
 		metadata_tsv = export_out + "/sampledata.tsv",
@@ -117,12 +117,15 @@ rule export_seqs:
 
 rule export_freq:
 	input:
-		freq = "{dir}/{name}freq.csv",
+		merged = merged_out + "/table/{name}freq.csv",
+		filtered = filter_out + "/table/{name}freq.csv",
 	output:
-		freq = export_out + "/{dir}-{name}freq.csv",
+		merged = export_out + "/merged-{name}freq.csv",
+		filtered = export_out + "/filtered-{name}freq.csv",
 	shell:
 		"""
-		cp {input.freq} {output.freq}
+		cp {input.merged} {output.merged}
+		cp {input.filtered} {output.filtered}
 		"""
 
 

@@ -94,9 +94,9 @@ rule ancom_csv:
 
 rule ancom_export:
 	input:
-		sv = ancom_out + "/{file}sv",
+		sv = ancom_out + "/{file}-ancom.csv",
 	output:
-		sv = export_out + "/{file}sv",
+		sv = export_out + "/{file}-ancom.csv",
 	shell:
 		"cp {input} {output}"
 
