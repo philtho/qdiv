@@ -7,8 +7,8 @@ merged_out = "merged"
 rule merge:
 	input:
 		table = merged_out + "/table.qza",
-		samplefreq_csv = merged_out + "/samplefreq.csv",
-		featurefreq_csv = merged_out + "/featurefreq.csv",
+		samplefreq_csv = merged_out + "/table/samplefreq.csv",
+		featurefreq_csv = merged_out + "/table/featurefreq.csv",
 		repseqs = merged_out + "/rep-seqs.qza",
 		repseqs_qzv = merged_out + "/rep-seqs.qzv",
 		taxonomy = taxonomy + "/taxonomy.qza",
@@ -17,61 +17,54 @@ rule merge:
 rule merge_table:
 	input:
 		table1 = input1 + "/table.qza",
-		#table2 = input2 + "/table.qza",
-		#table3 = input3 + "/table.qza",
-		#table4 = input4 + "/table.qza",
+		table2 = input2 + "/table.qza",
 	output:
-		table = "merged/table.qza",
+		table = merged_out + "/table.qza",
 	shell:
 		"""
 		qiime feature-table merge \
-		  --i-tables {input.table1} \
+		  --i-tables {input} \
 		  --o-merged-table {output.table}
 		"""
 
 rule merge_stats:
 	input:
 		stats1 = input1 + "/stats/stats.tsv",
-		#stats2 = input2 + "/stats/stats.tsv",
-		#stats3 = input3 + "/stats/stats.tsv",
-		#stats4 = input4 + "/stats/stats.tsv",
+		stats2 = input2 + "/stats/stats.tsv",
 	output:
-		csv = "merged/dada2stats.csv"
+		tsv = merged_out + "/dada2stats.tsv",
+		csv = merged_out + "/dada2stats.csv",
 	shell:
 		"""
-		cat {input} >merged/stats.tsv
-		( head -1 merged/stats.tsv | sed "s/ /_/g";
-		  egrep -v "sample-id|q2:types" merged/stats.tsv
+		cat {input} > {output.tsv}
+		( head -1 {output.tsv} | sed "s/ /_/g";
+		  egrep -v "sample-id|q2:types" {output.tsv}
 		) | sed "s/,//g; s/\t/,/g" > {output.csv}
 		"""
 
 rule merge_seqs:
 	input:
 		seqs1 = input1 + "/rep-seqs.qza",
-		#seqs2 = input2 + "/rep-seqs.qza",
-		#seqs3 = input3 + "/rep-seqs.qza",
-		#seqs4 = input4 + "/rep-seqs.qza",
+		seqs2 = input2 + "/rep-seqs.qza",
 	output:
-		seqs = "merged/rep-seqs.qza",
+		seqs = merged_out + "/rep-seqs.qza",
 	shell:
 		"""
 		qiime feature-table merge-seqs \
-		  --i-data {input.seqs1} \
+		  --i-data {input} \
 		  --o-merged-data {output.seqs}
 		"""
 
 rule merge_taxonomy:
 	input:
-		tax1 = input1 + "/{taxref}/taxonomy.qza",
-		tax2 = input2 + "/{taxref}/taxonomy.qza",
-		#tax3 = input3 + "/{taxref}/taxonomy.qza",
-		#tax4 = input4 + "/{taxref}/taxonomy.qza",
+		tax1 = input1 + "/" + taxref + "/taxonomy.qza",
+		tax2 = input2 + "/" + taxref + "/taxonomy.qza",
 	output:
 		tax = taxonomy + "/taxonomy.qza"
 	shell:
 		"""
 		qiime feature-table merge-taxa \
-		  --i-data {input.tax1} \
+		  --i-data {input} \
 		  --o-merged-data {output.tax}
 		"""
 
