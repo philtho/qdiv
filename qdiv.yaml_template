@@ -3,6 +3,7 @@
 metadata: "sampledata.tsv"
 dnastats: "dnastats.csv"
 refdir: "/w"   ## or /home/pthoma28/w
+taxref: "gg2-2024.09.v4"
 
 ## uncomment for multiple inputs to merge
 #input1: "C1-16S-slab-se-237"
