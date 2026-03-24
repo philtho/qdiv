@@ -35,3 +35,20 @@ rule phylogeny_sepp:
 			--o-placements {output.placements}
 		"""
 
+rule filter_tree:
+	input:
+		tree = phylogeny_out + "/rooted-tree.qza",
+		table = phylogeny_in + "/table.qza",
+	output:
+		tree = phylogeny_out + "/filtered-tree.qza",
+	threads:
+		1
+	shell:
+		"""
+		qiime phylogeny filter-tree \
+			--i-tree {input.tree} \
+			--i-table {input.table} \
+			--o-filtered-tree {output.tree}
+		"""
+
+

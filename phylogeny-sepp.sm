@@ -14,6 +14,9 @@ rule phylogeny:
 		#masked = phylogeny_out + "/masked-seqs.qza",
 		#tree_unrooted = phylogeny_out + "/unrooted-tree.qza",
 		tree_rooted = phylogeny_out + "/rooted-tree.qza",
+		tree_filtered = phylogeny_out + "/filtered-tree.qza",
+		filtered_qzv = phylogeny_out + "/table/summary.qzv",
+		removed_qzv = phylogeny_out + "/removed-table/summary.qzv",
 
 rule phylogeny_sepp:
 	input:
@@ -27,10 +30,47 @@ rule phylogeny_sepp:
 	shell:
 		"""
 		qiime fragment-insertion sepp \
-			--p-threads {threads} \
-			--i-representative-sequences {input.repseqs} \
-			--i-reference-database {input.reference} \
-			--o-tree {output.tree} \
-			--o-placements {output.placements}
+		  --p-threads {threads} \
+		  --i-representative-sequences {input.repseqs} \
+		  --i-reference-database {input.reference} \
+		  --o-tree {output.tree} \
+		  --o-placements {output.placements}
 		"""
+
+## https://docs.qiime2.org/2024.10/plugins/available/fragment-insertion/filter-features/
+rule filter_table:
+	input:
+		table = phylogeny_in + "/table.qza",
+		tree = phylogeny_out + "/rooted-tree.qza",
+	output:
+		table = phylogeny_out + "/table.qza",
+		removed = phylogeny_out + "/removed-table.qza",
+	threads:
+		1
+	shell:
+		"""
+		qiime fragment-insertion filter-features \
+		  --i-table {input.table} \
+		  --i-tree {input.tree} \
+		  --o-filtered-table {output.table} \
+		  --o-removed-table {output.removed}
+		"""
+
+rule filter_tree:
+	input:
+		tree = phylogeny_out + "/rooted-tree.qza",
+		table = phylogeny_out + "/table.qza",
+	output:
+		tree = phylogeny_out + "/filtered-tree.qza",
+	threads:
+		1
+	shell:
+		"""
+		qiime phylogeny filter-tree \
+		  --i-tree {input.tree} \
+		  --i-table {input.table} \
+		  --o-filtered-tree {output.tree}
+		"""
+
+
 
