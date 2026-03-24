@@ -16,7 +16,7 @@ rule export:
 		table_csv = export_out + "/table.csv",
 		taxonomy = export_out + "/taxonomy.qza",
 		taxonomy_csv = export_out + "/taxonomy.csv",
-		tree = export_out + "/rooted-tree.qza",
+		tree = export_out + "/filtered-tree.qza",
 		tree_nwk = export_out + "/tree.nwk",
 		repseqs = export_out + "/dna-sequences.fasta",
 		merged_samplefreq = export_out + "/merged-samplefreq.csv",
@@ -28,7 +28,7 @@ rule export:
 rule export_table:
 	input:
 		metadata = metadata,
-		table = export_in + "/table.qza",
+		table = export_in + "/phylogeny/table.qza",
 		dnastats = dnastats,
 		dada2stats = merged_out + "/dada2stats.csv",
 	output:
@@ -87,15 +87,15 @@ rule export_taxonomy:
 
 rule export_tree:
 	input:
-		tree = phylogeny_out + "/rooted-tree.qza",
+		tree = phylogeny_out + "/filtered-tree.qza",
 	output:
-		tree = export_out + "/rooted-tree.qza",
-		tree_nwk = export_out + "/tree.nwk",
+		tree = export_out + "/filtered-tree.qza",
+		nwk = export_out + "/tree.nwk",
 	threads:
 		1
 	shell:
 		"""
-		cp {input} {export_out}/
+		cp {input.tree} {export_out.tree}/
 		qiime tools export \
 			--input-path {input.tree} \
 			--output-path {export_out}

@@ -22,7 +22,7 @@ rule core_metrics:
 	input:
 		tree = phylogeny_out + "/rooted-tree.qza",
 		table = diversity_in + "/table.qza",
-		repseqs = diversity_in + "/rep-seqs.qza",
+		#repseqs = diversity_in + "/rep-seqs.qza",
 		metadata = metadata,
 	output:
 		diversity_out + "/rarefied_table.qza",
