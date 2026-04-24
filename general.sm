@@ -24,33 +24,61 @@ rule stats_qzv:
 		  --o-visualization {output.qzv}
 		"""
 
-rule table_summary:
+rule table_samplefreq:
 	input:
 		table = "{dir}/{table}.qza",
 	output:
-		samplefreq = "{dir}/{table}/samplefreq.csv",
+		tsv = "{dir}/{table}/samplefreq.tsv",
+		csv = "{dir}/{table}/samplefreq.csv",
 		depth = "{dir}/{table}/depth.tsv",
-		featurefreq = "{dir}/{table}/featurefreq.csv",
-		qzv = "{dir}/{table}/summary.qzv",
 	threads:
 		1
 	shell:
 		"""
-		qiime feature-table summarize \
+		qiime feature-table tabulate-sample-frequencies \
 		  --i-table {input.table} \
 		  --output-dir temp.$$
 		qiime tools export \
 		  --input-path temp.$$/sample_frequencies.qza \
-		  --output-path temp.$$/sample
-		sed "s/,//g; s/ /_/g; s/\t/,/g;" temp.$$/sample/metadata.tsv |
-		  grep -v "q2:types" > {output.samplefreq}
-		sort -n -k2 temp.$$/sample/metadata.tsv > {output.depth}
-		qiime tools export \
-		  --input-path temp.$$/feature_frequencies.qza \
-		  --output-path temp.$$/feature
-		sed "s/,//g; s/ /_/g; s/\t/,/g" temp.$$/feature/metadata.tsv |
-		  grep -v "q2:types" > {output.featurefreq}
-		mv temp.$$/summary.qzv {output.qzv}
+		  --output-path temp.$$
+		mv temp.$$/metadata.tsv {output.tsv}
+		sed "s/,//g; s/ /_/g; s/\t/,/g;" {output.tsv} |
+		  grep -v "q2:types" > {output.csv}
+		sort -n -k2 {output.tsv} > {output.depth}
 		rm -r temp.$$
-                """
+		"""
 
+#rule table_summary:
+#	input:
+#		table = "{dir}/{table}.qza",
+#	output:
+#		samplefreq = "{dir}/{table}/samplefreq.csv",
+#		depth = "{dir}/{table}/depth.tsv",
+#		featurefreq = "{dir}/{table}/featurefreq.csv",
+#		qzv = "{dir}/{table}/summary.qzv",
+#	threads:
+#		1
+#	shell:
+#		"""
+#		(	qiime feature-table summarize \
+#			  --i-table {input.table} \
+#			  --output-dir temp.$$
+#		) && (
+#			qiime tools export \
+#			  --input-path temp.$$/sample_frequencies.qza \
+#			  --output-path temp.$$/sample
+#			sed "s/,//g; s/ /_/g; s/\t/,/g;" temp.$$/sample/metadata.tsv |
+#			  grep -v "q2:types" > {output.samplefreq}
+#			sort -n -k2 temp.$$/sample/metadata.tsv > {output.depth}
+#			qiime tools export \
+#			  --input-path temp.$$/feature_frequencies.qza \
+#			  --output-path temp.$$/feature
+#			sed "s/,//g; s/ /_/g; s/\t/,/g" temp.$$/feature/metadata.tsv |
+#			  grep -v "q2:types" > {output.featurefreq}
+#			mv temp.$$/summary.qzv {output.qzv}
+#			rm -r temp.$$ 
+#		) || (
+#			touch {output}
+#		)
+#                """
+#

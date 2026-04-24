@@ -15,8 +15,8 @@ rule phylogeny:
 		#tree_unrooted = phylogeny_out + "/unrooted-tree.qza",
 		tree_rooted = phylogeny_out + "/rooted-tree.qza",
 		tree_filtered = phylogeny_out + "/filtered-tree.qza",
-		filtered_qzv = phylogeny_out + "/table/summary.qzv",
-		removed_qzv = phylogeny_out + "/removed-table/summary.qzv",
+		filtered_csv = phylogeny_out + "/table/samplefreq.csv",
+		removed_csv = phylogeny_out + "/removed-table/samplefreq.csv",
 
 rule phylogeny_sepp:
 	input:

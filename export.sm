@@ -95,7 +95,7 @@ rule export_tree:
 		1
 	shell:
 		"""
-		cp {input.tree} {export_out.tree}/
+		cp {input.tree} {output.tree}
 		qiime tools export \
 			--input-path {input.tree} \
 			--output-path {export_out}
