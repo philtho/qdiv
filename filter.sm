@@ -8,16 +8,17 @@ filter_out = "filtered"
 
 rule filter:
 	input:
-		table = filter_out + "/table.qza",
-		depth = filter_out + "/table/depth.tsv",
-		samplefreq_csv = filter_out + "/table/samplefreq.csv",
-		repseqs = filter_out + "/rep-seqs.qza",
-		repseqs_qzv = filter_out + "/rep-seqs.qzv",
-		barplot = filter_out + "/barplot.qzv",
+		filter_out + "/table.qza",
+		filter_out + "/table/samplefreq.csv",
+		filter_out + "/table/depth.tsv",
+		filter_out + "/rep-seqs.qza",
+		filter_out + "/rep-seqs.qzv",
+		filter_out + "/barplot.qzv",
 
 rule depth:
 	input:
-		table = filter_out + "/samples-table/depth.tsv",
+		filter_out + "/samples-table/depth.tsv",
+		filter_out + "/taxa-table/depth.tsv",
 
 rule filter_samples:
 	input:
@@ -36,28 +37,12 @@ rule filter_samples:
 		  --o-filtered-table {output.table}
 		"""
 
-
-rule filter_depth:
-	input:
-		table = "{dir}/samples-table.qza",
-	output:
-		table = "{dir}/depth-table.qza",
-	threads:
-		1
-	shell:
-		"""
-		qiime feature-table filter-samples \
-		  --i-table {input.table} \
-		  --p-min-frequency {min_sample_depth} \
-		  --o-filtered-table {output.table}
-		"""
-
 rule filter_taxa:
 	input:
-		table = "{dir}/depth-table.qza",
+		table = "{dir}/samples-table.qza",
 		taxonomy = taxonomy + "/taxonomy.qza",
 	output:
-		table = "{dir}/table.qza",
+		table = "{dir}/taxa-table.qza",
 	threads:
 		1
 	shell:
@@ -66,6 +51,21 @@ rule filter_taxa:
 		  --i-table {input.table} \
 		  --i-taxonomy {input.taxonomy} \
 		  --p-exclude mitochondria,chloroplast,d__Eukaryota \
+		  --o-filtered-table {output.table}
+		"""
+
+rule filter_depth:
+	input:
+		table = "{dir}/taxa-table.qza",
+	output:
+		table = "{dir}/table.qza",
+	threads:
+		1
+	shell:
+		"""
+		qiime feature-table filter-samples \
+		  --i-table {input.table} \
+		  --p-min-frequency {min_sample_depth} \
 		  --o-filtered-table {output.table}
 		"""
 
