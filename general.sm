@@ -48,6 +48,31 @@ rule table_samplefreq:
 		rm -r temp.$$
 		"""
 
+rule table_featurefreq:
+	input:
+		table = "{dir}/{table}.qza",
+	output:
+		tsv = "{dir}/{table}/featurefreq.tsv",
+		csv = "{dir}/{table}/featurefreq.csv",
+		depth = "{dir}/{table}/depth.tsv",
+	threads:
+		1
+	shell:
+		"""
+		qiime feature-table tabulate-feature-frequencies \
+		  --i-table {input.table} \
+		  --output-dir temp.$$
+		qiime tools export \
+		  --input-path temp.$$/feature_frequencies.qza \
+		  --output-path temp.$$
+		mv temp.$$/metadata.tsv {output.tsv}
+		sed "s/,//g; s/ /_/g; s/\t/,/g;" {output.tsv} |
+		  grep -v "q2:types" > {output.csv}
+		sort -n -k2 {output.tsv} > {output.depth}
+		rm -r temp.$$
+		"""
+
+
 #rule table_summary:
 #	input:
 #		table = "{dir}/{table}.qza",
